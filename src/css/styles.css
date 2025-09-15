@@ -10,13 +10,13 @@
 }
 
 @keyframes backgroundRotate {
-    0% { background-image: url('hero-bg-1.png'); }
-    16.66% { background-image: url('hero-bg-2.png'); }
-    33.33% { background-image: url('hero-bg-3.png'); }
-    50% { background-image: url('hero-bg-4.jpg'); }
-    66.66% { background-image: url('hero-bg-5.png'); }
-    83.33% { background-image: url('hero-bg-6.png?v=2025'); }
-    100% { background-image: url('hero-bg-1.png'); }
+    0% { background-image: url('../assets/imgs/hero-bg-1.png'); }
+    16.66% { background-image: url('../assets/imgs/hero-bg-2.png'); }
+    33.33% { background-image: url('../assets/imgs/hero-bg-3.png'); }
+    50% { background-image: url('../assets/imgs/hero-bg-4.jpg'); }
+    66.66% { background-image: url('../assets/imgs/hero-bg-5.png'); }
+    83.33% { background-image: url('../assets/imgs/hero-bg-6.png?v=2025'); }
+    100% { background-image: url('../assets/imgs/hero-bg-1.png'); }
 }
 
 /* Smooth scrolling */

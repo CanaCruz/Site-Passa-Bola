@@ -50,15 +50,15 @@ Site Passa Bola/
 ├── styles.css              # Estilos customizados
 ├── script.js               # JavaScript principal
 ├── sw.js                   # Service Worker
-├── logo.png                # Logo principal (imagem fornecida)
+├── logo.png                # Logo principal 
 ├── pages/                  # Páginas adicionais
 │   ├── about.html          # Página sobre
 │   ├── news.html           # Página de notícias
 │   └── contact.html        # Página de contato
-├── hero-bg-1.jpg          # Imagem de fundo 1 (fornecida)
-├── hero-bg-2.jpg          # Imagem de fundo 2 (fornecida)
-├── hero-bg-3.jpg          # Imagem de fundo 3 (fornecida)
-├── hero-bg-4.jpg          # Imagem de fundo 4 (fornecida)
+├── hero-bg-1.jpg          # Imagem de fundo 1 
+├── hero-bg-2.jpg          # Imagem de fundo 2
+├── hero-bg-3.jpg          # Imagem de fundo 3 
+├── hero-bg-4.jpg          # Imagem de fundo 4 
 └── README.md              # Documentação
 ```
 

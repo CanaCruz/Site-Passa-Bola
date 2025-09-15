@@ -96,8 +96,8 @@ class PassaBolaApp {
         try {
             this.showLoading(true);
             
-            // Simulate API call
-            await this.simulateApiCall();
+            // Simular delay de processamento
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             // Simple validation
             if (email && password) {
@@ -125,8 +125,8 @@ class PassaBolaApp {
         try {
             this.showLoading(true);
             
-            // Simulate API call
-            await this.simulateApiCall();
+            // Simular delay de processamento
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             this.showSuccess('Mensagem enviada com sucesso! Entraremos em contato em breve.');
             form.reset();
@@ -146,7 +146,7 @@ class PassaBolaApp {
                     id: 1,
                     title: 'Seleção Brasileira Feminina vence amistoso internacional',
                     excerpt: 'A seleção brasileira feminina conquistou uma importante vitória em amistoso contra a seleção da França.',
-                    image: 'hero-bg-1.png',
+                    image: 'src/assets/imgs/hero-bg-1.png',
                     date: '2024-01-15',
                     category: 'Seleção Brasileira'
                 },
@@ -154,7 +154,7 @@ class PassaBolaApp {
                     id: 2,
                     title: 'Campeonato Brasileiro Feminino: Corinthians lidera tabela',
                     excerpt: 'O Corinthians mantém a liderança do Campeonato Brasileiro Feminino após vitória sobre o São Paulo.',
-                    image: 'hero-bg-2.png',
+                    image: 'src/assets/imgs/hero-bg-2.png',
                     date: '2024-01-14',
                     category: 'Campeonato Brasileiro'
                 },
@@ -162,7 +162,7 @@ class PassaBolaApp {
                     id: 3,
                     title: 'Artilheira do Brasileirão bate recorde histórico',
                     excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
-                    image: 'hero-bg-3.png',
+                    image: 'src/assets/imgs/hero-bg-3.png',
                     date: '2024-01-13',
                     category: 'Campeonato Brasileiro'
                 },
@@ -170,7 +170,7 @@ class PassaBolaApp {
                     id: 4,
                     title: 'Projeto social promove futebol feminino em comunidades',
                     excerpt: 'Iniciativa leva futebol feminino para comunidades carentes, promovendo inclusão social.',
-                    image: 'hero-bg-4.jpg',
+                    image: 'src/assets/imgs/hero-bg-4.jpg',
                     date: '2024-01-12',
                     category: 'Social'
                 },
@@ -178,7 +178,7 @@ class PassaBolaApp {
                     id: 5,
                     title: 'Campeonato Brasileiro Feminino: Temporada promete',
                     excerpt: 'Times se preparam para mais uma edição do Campeonato Brasileiro Feminino.',
-                    image: 'hero-bg-5.png',
+                    image: 'src/assets/imgs/hero-bg-5.png',
                     date: '2024-01-11',
                     category: 'Campeonato'
                 },
@@ -186,7 +186,7 @@ class PassaBolaApp {
                     id: 6,
                     title: 'Liga dos Campeões Feminina: Brasileiras em destaque',
                     excerpt: 'Jogadoras brasileiras se destacam na Liga dos Campeões Feminina da UEFA.',
-                    image: 'hero-bg-6.png?v=2025',
+                    image: 'src/assets/imgs/hero-bg-6.png?v=2025',
                     date: '2024-01-10',
                     category: 'Internacional'
                 }
@@ -333,10 +333,6 @@ class PassaBolaApp {
         }, 5000);
     }
 
-    async simulateApiCall() {
-        // Simulate network delay
-        return new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    }
 
     // API integration methods
     async fetchNewsFromAPI() {
