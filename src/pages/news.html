@@ -262,14 +262,17 @@
 
     <script src="../js/api-config.js"></script>
     <script src="../js/real-apis.js"></script>
-    <script src="../js/script.js"></script>
     <script>
         // News page specific functionality
         class NewsPage {
             constructor() {
                 this.currentFilter = 'all';
                 this.newsData = [];
+                this.allNewsData = []; // Store all news from API
                 this.displayedNews = 6;
+                this.newsPerLoad = 6;
+                this.isLoading = false;
+                this.realAPI = new RealAPIManager();
                 this.init();
             }
 
@@ -311,92 +314,191 @@
 
             async loadNews() {
                 try {
-                    // Mock news data with more items
-                    this.newsData = [
+                    this.showLoadingState(true);
+                    
+                    // Fetch real news from API
+                    const realNews = await this.realAPI.fetchRealNews();
+                    
+                    // Process news from API - they will only appear in "Todas" (all)
+                    const processedAPINews = realNews.map((news, index) => {
+                        return {
+                            ...news,
+                            filter: 'api' // Special filter for API news, only shown in "all"
+                        };
+                    });
+
+                    // Mock news for each specific category (will not appear in API filter)
+                    const mockNews = [
+                        // Seleção Brasileira (1 notícia)
                         {
-                            id: 1,
-                            title: 'Seleção Brasileira Feminina vence amistoso internacional',
-                            excerpt: 'A seleção brasileira feminina conquistou uma importante vitória em amistoso contra a seleção da França.',
+                            id: 100,
+                            title: 'Seleção Brasileira Feminina convoca novas jogadoras',
+                            excerpt: 'Técnico anuncia lista para próximos amistosos internacionais.',
                             image: '../assets/imgs/hero-bg-1.png',
                             date: '2024-01-15',
                             category: 'Seleção Brasileira',
-                            filter: 'selecao'
+                            filter: 'selecao',
+                            source: 'Portal Esportivo'
                         },
+                        
+                        // Campeonato Brasileiro (3 notícias)
                         {
-                            id: 2,
+                            id: 101,
                             title: 'Campeonato Brasileiro Feminino: Corinthians lidera tabela',
                             excerpt: 'O Corinthians mantém a liderança do Campeonato Brasileiro Feminino após vitória sobre o São Paulo.',
                             image: '../assets/imgs/hero-bg-2.png',
                             date: '2024-01-14',
                             category: 'Campeonato Brasileiro',
-                            filter: 'campeonato'
+                            filter: 'campeonato',
+                            source: 'Portal Esportivo'
                         },
                         {
-                            id: 3,
-                            title: 'Artilheira do Brasileirão bate recorde histórico',
-                            excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
+                            id: 105,
+                            title: 'Santos e Palmeiras empatam no clássico feminino',
+                            excerpt: 'Clássico paulista termina empatado em partida emocionante do campeonato.',
                             image: '../assets/imgs/hero-bg-3.png',
                             date: '2024-01-13',
                             category: 'Campeonato Brasileiro',
-                            filter: 'campeonato'
+                            filter: 'campeonato',
+                            source: 'Portal Esportivo'
                         },
                         {
-                            id: 4,
-                            title: 'Projeto social promove futebol feminino em comunidades',
-                            excerpt: 'Iniciativa leva futebol feminino para comunidades carentes, promovendo inclusão social.',
-                            image: '../assets/imgs/hero-bg-4.jpg',
-                            date: '2024-01-12',
-                            category: 'Social',
-                            filter: 'social'
-                        },
-                        {
-                            id: 5,
-                            title: 'Campeonato Brasileiro Feminino: Temporada promete',
-                            excerpt: 'Times se preparam para mais uma edição do Campeonato Brasileiro Feminino.',
+                            id: 106,
+                            title: 'Flamengo vence Grêmio no Brasileirão Feminino',
+                            excerpt: 'Time carioca conquista vitória importante fora de casa contra o Grêmio.',
                             image: '../assets/imgs/hero-bg-5.png',
-                            date: '2024-01-11',
-                            category: 'Campeonato',
-                            filter: 'campeonato'
+                            date: '2024-01-12',
+                            category: 'Campeonato Brasileiro',
+                            filter: 'campeonato',
+                            source: 'Portal Esportivo'
                         },
+                        
+                        // Internacional (1 notícia)
                         {
-                            id: 6,
+                            id: 102,
+                            title: 'Artilheira do Brasileirão bate recorde histórico',
+                            excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
+                            image: '../assets/imgs/hero-bg-6.png',
+                            date: '2024-01-11',
+                            category: 'Internacional',
+                            filter: 'internacional',
+                            source: 'Portal Esportivo'
+                        },
+                        
+                        // Social (1 notícia)
+                        {
+                            id: 104,
                             title: 'Liga dos Campeões Feminina: Brasileiras em destaque',
                             excerpt: 'Jogadoras brasileiras se destacam na Liga dos Campeões Feminina da UEFA.',
-                            image: '../assets/imgs/hero-bg-6.png?v=2025',
+                            image: '../assets/imgs/hero-bg-4.jpg',
                             date: '2024-01-10',
-                            category: 'Internacional',
-                            filter: 'internacional'
+                            category: 'Social',
+                            filter: 'social',
+                            source: 'Portal Esportivo'
                         }
                     ];
 
+                    // Combine API news with mock news
+                    this.allNewsData = [...processedAPINews, ...mockNews];
+                    
+                    this.displayedNews = this.newsPerLoad;
                     this.renderNews();
+                    
+                    console.log('✅ News loaded successfully:', this.allNewsData.length, 'articles');
+                    console.log('API News:', processedAPINews.length, '+ Mock News:', mockNews.length);
+                    
                 } catch (error) {
                     console.error('Error loading news:', error);
+                    this.showErrorState();
+                } finally {
+                    this.showLoadingState(false);
+                }
+            }
+
+            categorizeNews(categoryOrTitle) {
+                const text = (categoryOrTitle || '').toLowerCase();
+                
+                // Seleção Brasileira keywords (mais específicos)
+                if (text.includes('convocação') || text.includes('seleção feminina') || 
+                    text.includes('marta') || text.includes('copa do mundo feminina') ||
+                    text.includes('amistoso internacional') || text.includes('ranking fifa feminino')) {
+                    return 'selecao';
+                }
+                
+                // Internacional keywords (primeiro para capturar notícias internacionais)
+                else if (text.includes('internacional') || text.includes('mundial') || text.includes('liga') || 
+                         text.includes('uefa') || text.includes('champions') || text.includes('europa') ||
+                         text.includes('france') || text.includes('frança') || text.includes('argentina') ||
+                         text.includes('olympics') || text.includes('olímpicos') || text.includes('world') || 
+                         text.includes('international') || text.includes('global')) {
+                    return 'internacional';
+                }
+                
+                // Social keywords
+                else if (text.includes('social') || text.includes('projeto') || text.includes('comunidade') ||
+                         text.includes('inclusão') || text.includes('ong') || text.includes('escola') ||
+                         text.includes('educação') || text.includes('sociedade') || text.includes('carente') ||
+                         text.includes('prêmio') || text.includes('esports')) {
+                    return 'social';
+                }
+                
+                // Campeonato Brasileiro keywords (mais amplo para capturar a maioria)
+                else if (text.includes('campeonato') || text.includes('brasileirão') || text.includes('corinthians') || 
+                         text.includes('palmeiras') || text.includes('flamengo') || text.includes('santos') ||
+                         text.includes('são paulo') || text.includes('cruzeiro') || text.includes('tabela') || 
+                         text.includes('rodada') || text.includes('artilheira') || text.includes('gols') || 
+                         text.includes('vitória') || text.includes('título') || text.includes('campeão') ||
+                         text.includes('brasil') || text.includes('brasileira') || text.includes('feminino') ||
+                         text.includes('time') || text.includes('clube') || text.includes('jogadora') || 
+                         text.includes('técnico') || text.includes('lula') || text.includes('conquista')) {
+                    return 'campeonato';
+                }
+                
+                // Default: campeonato (a maioria das notícias da API parecem ser sobre clubes)
+                else {
+                    return 'campeonato';
                 }
             }
 
             renderNews() {
                 const container = document.getElementById('newsContainer');
-                const filteredNews = this.currentFilter === 'all' 
-                    ? this.newsData.slice(0, this.displayedNews)
-                    : this.newsData.filter(news => news.filter === this.currentFilter).slice(0, this.displayedNews);
+                
+                // Get filtered news based on current filter
+                let allFilteredNews;
+                
+                if (this.currentFilter === 'all') {
+                    // Show ALL news (API + mock) in "Todas"
+                    allFilteredNews = this.allNewsData;
+                } else {
+                    // Show ONLY mock news in specific categories (exclude API news)
+                    allFilteredNews = this.allNewsData.filter(news => 
+                        news.filter === this.currentFilter && news.filter !== 'api'
+                    );
+                }
 
-                if (filteredNews.length === 0) {
+                // Get only the news to display (based on displayedNews count)
+                const newsToShow = allFilteredNews.slice(0, this.displayedNews);
+
+                if (newsToShow.length === 0) {
                     container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhuma notícia encontrada para este filtro.</p>';
                     return;
                 }
 
-                container.innerHTML = filteredNews.map(news => `
-                    <article class="news-card card-hover">
-                        <img src="${news.image}" alt="${news.title}" loading="lazy">
+                container.innerHTML = newsToShow.map(news => `
+                    <article class="news-card card-hover" onclick="window.open('${news.url || '#'}', '_blank')">
+                        <img src="${news.image}" alt="${news.title}" loading="lazy" style="width: 100%; height: 200px; object-fit: cover; object-position: center top;">
                         <div class="news-card-content">
-                            <div class="date mb-2">${this.formatDate(news.date)}</div>
-                            <h3>${news.title}</h3>
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="date">${this.formatDate(news.date)}</div>
+                                ${news.source ? `<div class="text-xs text-gray-500">${news.source}</div>` : ''}
+                            </div>
+                            <h3 class="cursor-pointer hover:text-purple-600 transition-colors">${news.title}</h3>
                             <p class="mt-2">${news.excerpt}</p>
-                            <div class="mt-4">
+                            <div class="mt-4 flex justify-between items-center">
                                 <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
                                     ${news.category}
                                 </span>
+                                ${news.url && news.url !== '#' ? '<span class="text-xs text-purple-600 hover:text-purple-800 cursor-pointer">📖 Ler mais</span>' : ''}
                             </div>
                         </div>
                     </article>
@@ -405,13 +507,57 @@
 
             filterNews(filter) {
                 this.currentFilter = filter;
-                this.displayedNews = 6; 
+                this.displayedNews = this.newsPerLoad;
                 this.renderNews();
             }
 
             loadMoreNews() {
-                this.displayedNews += 6;
-                this.renderNews();
+                if (this.isLoading) return;
+                
+                this.isLoading = true;
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                const originalText = loadMoreBtn.innerHTML;
+                
+                // Show loading state
+                loadMoreBtn.innerHTML = '<span class="loading-spin"></span> Carregando...';
+                loadMoreBtn.disabled = true;
+                
+                // Simulate loading delay
+                setTimeout(() => {
+                    this.displayedNews += this.newsPerLoad;
+                    this.renderNews();
+                    
+                    // Reset button state
+                    loadMoreBtn.innerHTML = originalText;
+                    loadMoreBtn.disabled = false;
+                    this.isLoading = false;
+                }, 800);
+            }
+
+            showLoadingState(show) {
+                const container = document.getElementById('newsContainer');
+                
+                if (show) {
+                    container.innerHTML = `
+                        <div class="col-span-full flex justify-center items-center py-12">
+                            <div class="loading-futuristic"></div>
+                            <span class="ml-4 text-purple-600 font-medium">Carregando notícias reais...</span>
+                        </div>
+                    `;
+                }
+            }
+
+            showErrorState() {
+                const container = document.getElementById('newsContainer');
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-red-500 text-xl mb-4">❌</div>
+                        <p class="text-gray-600">Erro ao carregar notícias. Tentando novamente...</p>
+                        <button onclick="location.reload()" class="mt-4 btn-futuristic px-6 py-2">
+                            Tentar Novamente
+                        </button>
+                    </div>
+                `;
             }
 
             formatDate(dateString) {
