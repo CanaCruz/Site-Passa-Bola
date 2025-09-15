@@ -11,6 +11,11 @@ class PassaBolaApp {
         this.loadNews();
         this.setupIntersectionObserver();
         this.setupBackgroundRotation();
+        this.initFuturisticEffects();
+        this.createParticleBackground();
+        this.setupCursorTrail();
+        this.addTypingEffect();
+        this.setupMobileEnhancements();
     }
 
     setupEventListeners() {
@@ -257,11 +262,20 @@ class PassaBolaApp {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    
+                    // Add staggered animation delays
+                    const elements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
+                    elements.forEach((el, index) => {
+                        if (el === entry.target) {
+                            el.style.transitionDelay = `${index * 0.1}s`;
+                        }
+                    });
                 }
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.fade-in').forEach(el => {
+        // Observe different animation types
+        document.querySelectorAll('.fade-in, .fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
             observer.observe(el);
         });
     }
@@ -447,6 +461,258 @@ class PassaBolaApp {
                 setTimeout(() => inThrottle = false, limit);
             }
         };
+    }
+
+    // 🚀 Futuristic Effects
+    initFuturisticEffects() {
+        // Add GPU acceleration to animated elements
+        document.querySelectorAll('.news-card, .glass-card, .btn-futuristic, .btn-holographic').forEach(el => {
+            el.classList.add('gpu-accelerated');
+        });
+
+        // Enhanced hover effects for cards
+        document.querySelectorAll('.news-card').forEach(card => {
+            card.addEventListener('mouseenter', (e) => {
+                e.target.style.transform = 'translateY(-10px) rotateX(5deg) scale(1.02)';
+                e.target.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15), 0 0 30px rgba(139, 92, 246, 0.3)';
+            });
+
+            card.addEventListener('mouseleave', (e) => {
+                e.target.style.transform = '';
+                e.target.style.boxShadow = '';
+            });
+        });
+
+        // Add glow effects to buttons on hover
+        document.querySelectorAll('.btn-futuristic, .btn-holographic').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.classList.add('box-glow');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('box-glow');
+            });
+        });
+
+        // Parallax scroll effect
+        window.addEventListener('scroll', this.throttle(() => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.hero-bg');
+            
+            parallaxElements.forEach(element => {
+                const speed = 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        }, 10));
+    }
+
+    // ✨ Particle Background System
+    createParticleBackground() {
+        const heroSection = document.querySelector('.hero-bg');
+        if (!heroSection) return;
+
+        const particlesContainer = document.createElement('div');
+        particlesContainer.className = 'particles-background';
+        heroSection.appendChild(particlesContainer);
+
+        // Create floating particles
+        for (let i = 0; i < 50; i++) {
+            this.createParticle(particlesContainer);
+        }
+
+        // Continuously spawn new particles
+        setInterval(() => {
+            if (particlesContainer.children.length < 50) {
+                this.createParticle(particlesContainer);
+            }
+        }, 2000);
+    }
+
+    createParticle(container) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 4 + 1;
+        const animationDuration = Math.random() * 20 + 10;
+        const opacity = Math.random() * 0.5 + 0.2;
+        
+        particle.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${Math.random() * 100}%;
+            opacity: ${opacity};
+            animation-duration: ${animationDuration}s;
+            animation-delay: ${Math.random() * 5}s;
+        `;
+
+        container.appendChild(particle);
+
+        // Remove particle after animation
+        particle.addEventListener('animationend', () => {
+            if (particle.parentNode) {
+                particle.parentNode.removeChild(particle);
+            }
+        });
+    }
+
+    // 🎯 Interactive Cursor Trail
+    setupCursorTrail() {
+        if (window.innerWidth <= 768) return; // Skip on mobile
+
+        const trail = [];
+        const trailLength = 10;
+
+        for (let i = 0; i < trailLength; i++) {
+            const dot = document.createElement('div');
+            dot.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: rgba(139, 92, 246, ${1 - i / trailLength});
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transition: all 0.1s ease;
+            `;
+            document.body.appendChild(dot);
+            trail.push(dot);
+        }
+
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        const animateTrail = () => {
+            let x = mouseX, y = mouseY;
+
+            trail.forEach((dot, index) => {
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+
+                const nextDot = trail[index + 1] || trail[0];
+                if (nextDot) {
+                    x += (parseFloat(nextDot.style.left) - x) * 0.3;
+                    y += (parseFloat(nextDot.style.top) - y) * 0.3;
+                }
+            });
+
+            requestAnimationFrame(animateTrail);
+        };
+
+        animateTrail();
+    }
+
+    // ⌨️ Typing Effect for Hero Title
+    addTypingEffect() {
+        const heroTitle = document.querySelector('h1');
+        if (!heroTitle) return;
+
+        // Apply styles without removing content initially
+        heroTitle.style.fontFamily = 'Poppins, sans-serif';
+        heroTitle.style.fontWeight = '300';
+        heroTitle.style.letterSpacing = '-0.02em';
+        
+        // Keep original text visible and just add a subtle fade-in effect
+        heroTitle.style.opacity = '0';
+        heroTitle.style.transform = 'translateY(20px)';
+        heroTitle.style.transition = 'all 1s ease-out';
+        
+        // Show the title with smooth animation
+        setTimeout(() => {
+            heroTitle.style.opacity = '1';
+            heroTitle.style.transform = 'translateY(0)';
+        }, 500);
+    }
+
+    // 🌈 Dynamic Color Theme Switcher
+    switchColorTheme(theme) {
+        const root = document.documentElement;
+        
+        const themes = {
+            purple: {
+                '--primary-purple': '#8b5cf6',
+                '--primary-pink': '#ec4899',
+                '--primary-blue': '#3b82f6',
+                '--primary-cyan': '#06b6d4'
+            },
+            pink: {
+                '--primary-purple': '#ec4899',
+                '--primary-pink': '#f97316',
+                '--primary-blue': '#06b6d4',
+                '--primary-cyan': '#10b981'
+            },
+            blue: {
+                '--primary-purple': '#3b82f6',
+                '--primary-pink': '#06b6d4',
+                '--primary-blue': '#8b5cf6',
+                '--primary-cyan': '#10b981'
+            }
+        };
+
+        const selectedTheme = themes[theme] || themes.purple;
+        
+        Object.entries(selectedTheme).forEach(([property, value]) => {
+            root.style.setProperty(property, value);
+        });
+    }
+
+    // 🎮 Interactive Sound Effects (Optional)
+    playInteractionSound(type = 'click') {
+        if (!window.AudioContext) return;
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        const frequencies = {
+            click: 800,
+            hover: 600,
+            success: 1000,
+            error: 400
+        };
+
+        oscillator.frequency.value = frequencies[type] || 600;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    // 📱 Enhanced Mobile Interactions
+    setupMobileEnhancements() {
+        if (window.innerWidth > 768) return;
+
+        // Add touch feedback
+        document.querySelectorAll('.btn-futuristic, .btn-holographic, .news-card').forEach(element => {
+            element.addEventListener('touchstart', () => {
+                element.style.transform = 'scale(0.95)';
+            });
+
+            element.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    element.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Haptic feedback for supported devices
+        const triggerHaptic = () => {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(10);
+            }
+        };
+
+        document.querySelectorAll('button, .news-card').forEach(element => {
+            element.addEventListener('touchstart', triggerHaptic);
+        });
     }
 }
 
