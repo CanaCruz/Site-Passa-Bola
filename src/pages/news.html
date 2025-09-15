@@ -300,6 +300,31 @@
                     e.preventDefault();
                     this.handleNewsletterSignup(e.target);
                 });
+
+                // Login buttons
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    this.openLoginModal();
+                });
+
+                document.getElementById('mobileLoginBtn').addEventListener('click', () => {
+                    this.openLoginModal();
+                });
+
+                // Login modal close buttons
+                document.getElementById('closeLoginModal').addEventListener('click', () => {
+                    this.closeLoginModal();
+                });
+
+                document.getElementById('loginModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'loginModal') {
+                        this.closeLoginModal();
+                    }
+                });
+
+                // Mobile menu toggle
+                document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                    this.toggleMobileMenu();
+                });
             }
 
             setActiveFilter(activeBtn) {
@@ -569,26 +594,59 @@
                 });
             }
 
+            // Login Modal Methods
+            openLoginModal() {
+                document.getElementById('loginModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeLoginModal() {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Mobile Menu Methods
+            toggleMobileMenu() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                mobileMenu.classList.toggle('hidden');
+            }
+
+            // Newsletter Signup
             async handleNewsletterSignup(form) {
-                const email = form.querySelector('input[type="email"]').value;
+                const formData = new FormData(form);
+                const email = formData.get('email');
                 
+                if (!email) {
+                    this.showToast('Por favor, insira um email válido.', 'error');
+                    return;
+                }
+
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const success = await this.realAPI.subscribeToNewsletter(email);
                     
-                    const successToast = document.getElementById('successToast');
-                    const messageEl = document.getElementById('successMessage');
-                    
-                    messageEl.textContent = 'Cadastro realizado com sucesso! Você receberá nossas notícias em breve.';
-                    successToast.classList.remove('hidden');
-                    
-                    form.reset();
-                    
-                    setTimeout(() => {
-                        successToast.classList.add('hidden');
-                    }, 5000);
+                    if (success) {
+                        this.showToast('Newsletter cadastrada com sucesso!', 'success');
+                        form.reset();
+                    } else {
+                        this.showToast('Erro ao cadastrar newsletter. Tente novamente.', 'error');
+                    }
                 } catch (error) {
                     console.error('Newsletter signup error:', error);
+                    this.showToast('Erro ao cadastrar newsletter. Tente novamente.', 'error');
                 }
+            }
+
+            // Toast Notifications
+            showToast(message, type = 'success') {
+                const toastId = type === 'success' ? 'successToast' : 'errorToast';
+                const messageId = type === 'success' ? 'successMessage' : 'errorMessage';
+                
+                document.getElementById(messageId).textContent = message;
+                document.getElementById(toastId).classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById(toastId).classList.add('hidden');
+                }, 3000);
             }
         }
 
