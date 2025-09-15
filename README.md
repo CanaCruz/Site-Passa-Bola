@@ -42,26 +42,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - Sistema de toast notifications
 - Fallbacks para falhas de rede
 
-## 📁 Estrutura do Projeto
-
-```
-Site Passa Bola/
-├── index.html              # Página principal
-├── styles.css              # Estilos customizados
-├── script.js               # JavaScript principal
-├── sw.js                   # Service Worker
-├── logo.png                # Logo principal 
-├── pages/                  # Páginas adicionais
-│   ├── about.html          # Página sobre
-│   ├── news.html           # Página de notícias
-│   └── contact.html        # Página de contato
-├── hero-bg-1.jpg          # Imagem de fundo 1 
-├── hero-bg-2.jpg          # Imagem de fundo 2
-├── hero-bg-3.jpg          # Imagem de fundo 3 
-├── hero-bg-4.jpg          # Imagem de fundo 4 
-└── README.md              # Documentação
-```
-
 ## 🎨 Paleta de Cores
 
 ### Cores Principais
@@ -107,22 +87,6 @@ Site Passa Bola/
 - Service Worker para cache
 - Otimização de recursos
 - Compressão de assets
-
-## 🚀 Como Executar
-
-1. **Clone ou baixe o projeto**
-2. **Abra o arquivo `index.html` em um navegador moderno**
-3. **Para desenvolvimento local com servidor HTTP:**
-   ```bash
-   # Usando Python
-   python -m http.server 8000
-   
-   # Usando Node.js
-   npx serve .
-   
-   # Usando PHP
-   php -S localhost:8000
-   ```
 
 ## 📋 Funcionalidades por Página
 
@@ -173,9 +137,10 @@ Site Passa Bola/
 - Sistema de notificações push
 - Integração com redes sociais
 
-## 📞 Suporte
+## 👨‍💻 Desenvolvedores
 
-Para dúvidas ou sugestões sobre o projeto, entre em contato através da página de contato do site ou abra uma issue no repositório.
+Arthur Canaverde da Cruz (RM:563029)
+Lucas Costa Zago (RM:562028)
 
 ---
 
