@@ -88,22 +88,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - Otimização de recursos
 - Compressão de assets
 
-## 🚀 Como Executar
-
-1. **Clone ou baixe o projeto**
-2. **Abra o arquivo `index.html` em um navegador moderno**
-3. **Para desenvolvimento local com servidor HTTP:**
-   ```bash
-   # Usando Python
-   python -m http.server 8000
-   
-   # Usando Node.js
-   npx serve .
-   
-   # Usando PHP
-   php -S localhost:8000
-   ```
-
 ## 📋 Funcionalidades por Página
 
 ### Página Principal (`index.html`)
@@ -153,9 +137,10 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - Sistema de notificações push
 - Integração com redes sociais
 
-## 📞 Suporte
+## 👨‍💻 Desenvolvedores
 
-Para dúvidas ou sugestões sobre o projeto, entre em contato através da página de contato do site ou abra uma issue no repositório.
+Arthur Canaverde da Cruz (RM:563029)
+Lucas Costa Zago (RM:562028)
 
 ---
 
