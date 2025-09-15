@@ -30,10 +30,12 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - Menu mobile responsivo
 - Links de navegação ativos
 
-#### 🌐 Consumo de APIs
-- Integração com serviços externos para obtenção de dados
-- Sistema de newsletter
-- Formulário de contato com validação
+#### 🌐 Consumo de APIs Reais
+- **NewsAPI**: Notícias reais de futebol feminino em tempo real ✅
+- **MailerLite**: Newsletter profissional com gestão de assinantes ✅
+- **RSS Feeds**: Fallback automático com feeds do GloboEsporte e Lance
+- **Formulário de Contato**: Armazenamento local para mensagens
+- Sistema de cache inteligente para otimizar requisições
 
 #### ⚠️ Tratamento de Erros
 - Gestão de exceções e falhas durante a execução
@@ -124,17 +126,40 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 ✅ **Responsividade**: Adaptação para todos os dispositivos  
 ✅ **Autenticação**: Sistema de login funcional  
 ✅ **Roteamento**: Navegação entre páginas  
-✅ **APIs**: Integração e simulação de serviços  
+✅ **APIs Reais**: NewsAPI e MailerLite configurados  
 ✅ **Tratamento de Erros**: Gestão completa de exceções  
 
 ## 🔮 Próximos Passos
 
-- Integração com APIs reais de notícias esportivas
-- Sistema de comentários
-- Área de membros
-- Chat em tempo real
+- ✅ ~~Integração com APIs reais de notícias esportivas~~ **CONCLUÍDO**
+- Sistema de comentários em notícias
+- Área de membros com dashboard
+- Chat em tempo real para torcedoras
 - Sistema de notificações push
 - Integração com redes sociais
+- Analytics e métricas de engajamento
+
+## 🌐 APIs Configuradas
+
+### 📰 Notícias Reais
+- **NewsAPI**: Notícias de futebol feminino em tempo real
+- **RSS Feeds**: GloboEsporte e Lance como fallback
+- **Cache**: 5 minutos para otimizar performance
+
+### 📧 Comunicação Real
+- **MailerLite**: Newsletter profissional (até 1.000 assinantes grátis) ✅
+- **Formulário Local**: Mensagens armazenadas localmente para revisão
+
+### 🔄 Fallbacks Automáticos
+- **RSS Feeds**: GloboEsporte e Lance como backup de notícias
+- **localStorage**: Backup para newsletter e formulários
+
+## 🔧 Como Configurar APIs
+
+1. **Leia o arquivo**: `REAL-APIS-SETUP.md`
+2. **Configure suas chaves**: Em `src/js/api-config.js`
+3. **Teste no console**: `new APIConfig().isConfigured()` (deve mostrar 2/2 configuradas)
+4. **Monitore logs**: Console do navegador (F12)
 
 ## 👨‍💻 Desenvolvedores
 

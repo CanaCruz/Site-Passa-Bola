@@ -3,6 +3,7 @@ class PassaBolaApp {
     constructor() {
         this.currentUser = null;
         this.newsData = [];
+        this.realAPI = new RealAPIManager();
         this.init();
     }
 
@@ -83,6 +84,15 @@ class PassaBolaApp {
                 }
             });
         }
+
+        // Newsletter signup
+        const newsletterForm = document.getElementById('newsletterForm');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleNewsletterSignup(e.target);
+            });
+        }
     }
 
     // Mobile menu close helper
@@ -125,77 +135,137 @@ class PassaBolaApp {
 
     async handleContactForm(form) {
         const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
 
         try {
             this.showLoading(true);
             
-            // Simular delay de processamento
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Send real email using APIs
+            const result = await this.realAPI.sendRealEmail(formData);
             
-            this.showSuccess('Mensagem enviada com sucesso! Entraremos em contato em breve.');
-            form.reset();
+            if (result.success) {
+                this.showSuccess(result.message);
+                form.reset();
+                
+                // Track contact form submission
+                console.log('✅ Contact form sent successfully via real API');
+            } else {
+                this.showError(result.message);
+            }
+            
         } catch (error) {
-            this.showError('Erro ao enviar mensagem. Tente novamente.');
+            console.error('Contact form error:', error);
+            this.showError('Erro ao enviar mensagem. Tente novamente ou entre em contato diretamente pelo email.');
         } finally {
             this.showLoading(false);
         }
     }
 
-    loadNews() {
-        // Carregamento instantâneo das notícias - sem simulação de API
+    async handleNewsletterSignup(form) {
+        const formData = new FormData(form);
+        const email = formData.get('email');
+        const name = formData.get('name') || '';
+
+        try {
+            this.showLoading(true, form.querySelector('button[type="submit"]'));
+            
+            // Subscribe using real API
+            const result = await this.realAPI.subscribeToNewsletter(email, name);
+            
+            if (result.success) {
+                this.showSuccess(result.message);
+                form.reset();
+                
+                // Track newsletter subscription
+                console.log('✅ Newsletter subscription successful via real API');
+            } else {
+                this.showError(result.message);
+            }
+            
+        } catch (error) {
+            console.error('Newsletter subscription error:', error);
+            this.showError('Erro ao se inscrever na newsletter. Tente novamente.');
+        } finally {
+            this.showLoading(false, form.querySelector('button[type="submit"]'));
+        }
+    }
+
+    async loadNews() {
+        try {
+            // Show loading state
+            this.showLoadingNews(true);
+            
+            // Fetch real news from APIs
+            this.newsData = await this.realAPI.fetchRealNews();
+            
+            // Render the real news
+            this.renderNews();
+            
+            console.log('✅ Real news loaded successfully!', this.newsData.length, 'articles');
+            
+        } catch (error) {
+            console.error('Error loading real news:', error);
+            this.handleError(error, 'loading news');
+            
+            // Fallback to mock data if real APIs fail
+            this.loadFallbackNews();
+        } finally {
+            this.showLoadingNews(false);
+        }
+    }
+
+    loadFallbackNews() {
+        console.warn('🔄 Loading fallback news data');
         
-        // Mock news data
         this.newsData = [
-                {
-                    id: 1,
-                    title: 'Seleção Brasileira Feminina vence amistoso internacional',
-                    excerpt: 'A seleção brasileira feminina conquistou uma importante vitória em amistoso contra a seleção da França.',
-                    image: 'src/assets/imgs/hero-bg-1.png',
-                    date: '2024-01-15',
-                    category: 'Seleção Brasileira'
-                },
-                {
-                    id: 2,
-                    title: 'Campeonato Brasileiro Feminino: Corinthians lidera tabela',
-                    excerpt: 'O Corinthians mantém a liderança do Campeonato Brasileiro Feminino após vitória sobre o São Paulo.',
-                    image: 'src/assets/imgs/hero-bg-2.png',
-                    date: '2024-01-14',
-                    category: 'Campeonato Brasileiro'
-                },
-                {
-                    id: 3,
-                    title: 'Artilheira do Brasileirão bate recorde histórico',
-                    excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
-                    image: 'src/assets/imgs/hero-bg-3.png',
-                    date: '2024-01-13',
-                    category: 'Campeonato Brasileiro'
-                },
-                {
-                    id: 4,
-                    title: 'Projeto social promove futebol feminino em comunidades',
-                    excerpt: 'Iniciativa leva futebol feminino para comunidades carentes, promovendo inclusão social.',
-                    image: 'src/assets/imgs/hero-bg-4.jpg',
-                    date: '2024-01-12',
-                    category: 'Social'
-                },
-                {
-                    id: 5,
-                    title: 'Campeonato Brasileiro Feminino: Temporada promete',
-                    excerpt: 'Times se preparam para mais uma edição do Campeonato Brasileiro Feminino.',
-                    image: 'src/assets/imgs/hero-bg-5.png',
-                    date: '2024-01-11',
-                    category: 'Campeonato'
-                },
-                {
-                    id: 6,
-                    title: 'Liga dos Campeões Feminina: Brasileiras em destaque',
-                    excerpt: 'Jogadoras brasileiras se destacam na Liga dos Campeões Feminina da UEFA.',
-                    image: 'src/assets/imgs/hero-bg-6.png?v=2025',
-                    date: '2024-01-10',
-                    category: 'Internacional'
-                }
-            ];
+            {
+                id: 1,
+                title: 'Seleção Brasileira Feminina vence amistoso internacional',
+                excerpt: 'A seleção brasileira feminina conquistou uma importante vitória em amistoso contra a seleção da França.',
+                image: 'src/assets/imgs/hero-bg-1.png',
+                date: '2024-01-15',
+                category: 'Seleção Brasileira'
+            },
+            {
+                id: 2,
+                title: 'Campeonato Brasileiro Feminino: Corinthians lidera tabela',
+                excerpt: 'O Corinthians mantém a liderança do Campeonato Brasileiro Feminino após vitória sobre o São Paulo.',
+                image: 'src/assets/imgs/hero-bg-2.png',
+                date: '2024-01-14',
+                category: 'Campeonato Brasileiro'
+            },
+            {
+                id: 3,
+                title: 'Artilheira do Brasileirão bate recorde histórico',
+                excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
+                image: 'src/assets/imgs/hero-bg-3.png',
+                date: '2024-01-13',
+                category: 'Campeonato Brasileiro'
+            },
+            {
+                id: 4,
+                title: 'Projeto social promove futebol feminino em comunidades',
+                excerpt: 'Iniciativa leva futebol feminino para comunidades carentes, promovendo inclusão social.',
+                image: 'src/assets/imgs/hero-bg-4.jpg',
+                date: '2024-01-12',
+                category: 'Social'
+            },
+            {
+                id: 5,
+                title: 'Campeonato Brasileiro Feminino: Temporada promete',
+                excerpt: 'Times se preparam para mais uma edição do Campeonato Brasileiro Feminino.',
+                image: 'src/assets/imgs/hero-bg-5.png',
+                date: '2024-01-11',
+                category: 'Campeonato'
+            },
+            {
+                id: 6,
+                title: 'Liga dos Campeões Feminina: Brasileiras em destaque',
+                excerpt: 'Jogadoras brasileiras se destacam na Liga dos Campeões Feminina da UEFA.',
+                image: 'src/assets/imgs/hero-bg-6.png?v=2025',
+                date: '2024-01-10',
+                category: 'Internacional'
+            }
+        ];
 
         this.renderNews();
     }
@@ -214,16 +284,20 @@ class PassaBolaApp {
         }
 
         container.innerHTML = this.newsData.map(news => `
-            <article class="news-card card-hover">
+            <article class="news-card card-hover" onclick="window.open('${news.url || '#'}', '_blank')">
                 <img src="${news.image}" alt="${news.title}" style="width: 100%; height: 200px; object-fit: cover; object-position: center top; display: block;">
                 <div class="news-card-content">
-                    <div class="date mb-2">${this.formatDate(news.date)}</div>
-                    <h3>${news.title}</h3>
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="date">${this.formatDate(news.date)}</div>
+                        ${news.source ? `<div class="text-xs text-gray-500">${news.source}</div>` : ''}
+                    </div>
+                    <h3 class="cursor-pointer hover:text-purple-600 transition-colors">${news.title}</h3>
                     <p class="mt-2">${news.excerpt}</p>
-                    <div class="mt-4">
+                    <div class="mt-4 flex justify-between items-center">
                         <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
                             ${news.category}
                         </span>
+                        ${news.url && news.url !== '#' ? '<span class="text-xs text-purple-600 hover:text-purple-800 cursor-pointer">📖 Ler mais</span>' : ''}
                     </div>
                 </div>
             </article>
@@ -310,6 +384,21 @@ class PassaBolaApp {
                     btn.innerHTML = btn.getAttribute('data-original-text') || 'Enviar';
                 }
             });
+        }
+    }
+
+    showLoadingNews(show) {
+        const container = document.getElementById('newsContainer');
+        
+        if (!container) return;
+        
+        if (show) {
+            container.innerHTML = `
+                <div class="col-span-full flex justify-center items-center py-12">
+                    <div class="loading-futuristic"></div>
+                    <span class="ml-4 text-purple-600 font-medium">Carregando notícias reais...</span>
+                </div>
+            `;
         }
     }
 
