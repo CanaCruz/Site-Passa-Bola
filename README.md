@@ -32,7 +32,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 
 #### 🌐 Consumo de APIs
 - Integração com serviços externos para obtenção de dados
-- Simulação de chamadas de API para notícias
 - Sistema de newsletter
 - Formulário de contato com validação
 
