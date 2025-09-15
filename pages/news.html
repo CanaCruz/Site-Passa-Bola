@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícias - Passa Bola</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rose': {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        'purple': {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7c3aed',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        },
+                        'pink': {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="../logo.png?v=2025" alt="Passa Bola Logo" class="h-10 w-auto">
+                    <span class="ml-3 text-2xl font-bold text-purple-700">Passa Bola</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="../index.html" class="text-gray-700 hover:text-purple-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Início</a>
+                        <a href="about.html" class="text-gray-700 hover:text-purple-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Sobre</a>
+                        <a href="news.html" class="text-purple-700 hover:text-purple-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Notícias</a>
+                        <a href="contact.html" class="text-gray-700 hover:text-purple-500 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contato</a>
+                        <button id="loginBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- News Content -->
+    <main class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <section class="text-center mb-16">
+                <h1 class="text-4xl md:text-5xl font-bold text-purple-800 mb-6">Notícias do Futebol Feminino</h1>
+                <p class="text-xl text-purple-600 max-w-3xl mx-auto">
+                    Acompanhe as principais notícias, resultados e novidades do futebol feminino brasileiro e mundial.
+                </p>
+            </section>
+
+            <!-- Filter Section -->
+            <section class="mb-12">
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="filter-btn active bg-purple-500 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300" data-filter="all">
+                        Todas
+                    </button>
+                    <button class="filter-btn bg-white text-purple-500 border border-purple-500 px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all duration-300" data-filter="selecao">
+                        Seleção Brasileira
+                    </button>
+                    <button class="filter-btn bg-white text-purple-500 border border-purple-500 px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all duration-300" data-filter="campeonato">
+                        Campeonato Brasileiro
+                    </button>
+                    <button class="filter-btn bg-white text-purple-500 border border-purple-500 px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all duration-300" data-filter="internacional">
+                        Internacional
+                    </button>
+                    <button class="filter-btn bg-white text-purple-500 border border-purple-500 px-6 py-2 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all duration-300" data-filter="social">
+                        Social
+                    </button>
+                </div>
+            </section>
+
+            <!-- News Grid -->
+            <section>
+                <div id="newsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- News cards will be loaded dynamically -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="text-center mt-12">
+                    <button id="loadMoreBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105">
+                        Carregar Mais Notícias
+                    </button>
+                </div>
+            </section>
+
+            <!-- Newsletter Section -->
+            <section class="mt-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 text-white text-center">
+                <h2 class="text-3xl font-bold mb-4">Receba Nossas Notícias</h2>
+                <p class="text-lg mb-6 opacity-90">
+                    Cadastre-se em nossa newsletter e receba as principais notícias do futebol feminino diretamente no seu email.
+                </p>
+                <form id="newsletterForm" class="max-w-md mx-auto flex gap-4">
+                    <input type="email" placeholder="Seu email" required class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
+                    <button type="submit" class="bg-white text-purple-500 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Cadastrar
+                    </button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-purple-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <img src="../logo.png?v=2025" alt="Passa Bola Logo" class="h-12 w-auto">
+                        <span class="ml-3 text-xl font-bold">Passa Bola</span>
+                    </div>
+                    <p class="text-purple-200 mb-4">
+                        Conectando e celebrando o futebol feminino brasileiro. Junte-se à nossa comunidade e faça parte da revolução do esporte feminino.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Links Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../index.html" class="text-purple-200 hover:text-white transition-colors">Início</a></li>
+                        <li><a href="about.html" class="text-purple-200 hover:text-white transition-colors">Sobre</a></li>
+                        <li><a href="news.html" class="text-purple-200 hover:text-white transition-colors">Notícias</a></li>
+                        <li><a href="contact.html" class="text-purple-200 hover:text-white transition-colors">Contato</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/passaabola/" target="_blank" class="text-purple-200 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@passabola" target="_blank" class="text-purple-200 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-.88-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.10z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.youtube.com/@passabola" target="_blank" class="text-purple-200 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com/passaabola" target="_blank" class="text-purple-200 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-purple-700 mt-8 pt-8 text-center">
+                <p class="text-purple-200">&copy; 2025 Passa Bola. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-purple-800">Login</h2>
+                <button id="closeLoginModal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="loginEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="loginEmail" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <input type="password" id="loginPassword" name="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                    Entrar
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">Não tem uma conta? <a href="#" class="text-purple-500 hover:text-purple-700 font-medium">Cadastre-se</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span id="successMessage"></span>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // News page specific functionality
+        class NewsPage {
+            constructor() {
+                this.currentFilter = 'all';
+                this.newsData = [];
+                this.displayedNews = 6;
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadNews();
+            }
+
+            setupEventListeners() {
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.setActiveFilter(e.target);
+                        this.filterNews(e.target.dataset.filter);
+                    });
+                });
+
+                // Load more button
+                document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                    this.loadMoreNews();
+                });
+
+                // Newsletter form
+                document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleNewsletterSignup(e.target);
+                });
+            }
+
+            setActiveFilter(activeBtn) {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-purple-500', 'text-white');
+                    btn.classList.add('bg-white', 'text-purple-500', 'border', 'border-purple-500');
+                });
+                
+                activeBtn.classList.add('active', 'bg-purple-500', 'text-white');
+                activeBtn.classList.remove('bg-white', 'text-purple-500', 'border', 'border-purple-500');
+            }
+
+            async loadNews() {
+                try {
+                    // Mock news data with more items
+                    this.newsData = [
+                        {
+                            id: 1,
+                            title: 'Seleção Brasileira Feminina vence amistoso internacional',
+                            excerpt: 'A seleção brasileira feminina conquistou uma importante vitória em amistoso contra a seleção da França.',
+                            image: '../hero-bg-1.png',
+                            date: '2024-01-15',
+                            category: 'Seleção Brasileira',
+                            filter: 'selecao'
+                        },
+                        {
+                            id: 2,
+                            title: 'Campeonato Brasileiro Feminino: Corinthians lidera tabela',
+                            excerpt: 'O Corinthians mantém a liderança do Campeonato Brasileiro Feminino após vitória sobre o São Paulo.',
+                            image: '../hero-bg-2.png',
+                            date: '2024-01-14',
+                            category: 'Campeonato Brasileiro',
+                            filter: 'campeonato'
+                        },
+                        {
+                            id: 3,
+                            title: 'Artilheira do Brasileirão bate recorde histórico',
+                            excerpt: 'Jogadora marca 25 gols no Campeonato Brasileiro e quebra recorde da competição.',
+                            image: '../hero-bg-3.png',
+                            date: '2024-01-13',
+                            category: 'Campeonato Brasileiro',
+                            filter: 'campeonato'
+                        },
+                        {
+                            id: 4,
+                            title: 'Projeto social promove futebol feminino em comunidades',
+                            excerpt: 'Iniciativa leva futebol feminino para comunidades carentes, promovendo inclusão social.',
+                            image: '../hero-bg-4.jpg',
+                            date: '2024-01-12',
+                            category: 'Social',
+                            filter: 'social'
+                        },
+                        {
+                            id: 5,
+                            title: 'Campeonato Brasileiro Feminino: Temporada promete',
+                            excerpt: 'Times se preparam para mais uma edição do Campeonato Brasileiro Feminino.',
+                            image: '../hero-bg-5.png',
+                            date: '2024-01-11',
+                            category: 'Campeonato',
+                            filter: 'campeonato'
+                        },
+                        {
+                            id: 6,
+                            title: 'Liga dos Campeões Feminina: Brasileiras em destaque',
+                            excerpt: 'Jogadoras brasileiras se destacam na Liga dos Campeões Feminina da UEFA.',
+                            image: '../hero-bg-6.png?v=2025',
+                            date: '2024-01-10',
+                            category: 'Internacional',
+                            filter: 'internacional'
+                        }
+                    ];
+
+                    this.renderNews();
+                } catch (error) {
+                    console.error('Error loading news:', error);
+                }
+            }
+
+            renderNews() {
+                const container = document.getElementById('newsContainer');
+                const filteredNews = this.currentFilter === 'all' 
+                    ? this.newsData.slice(0, this.displayedNews)
+                    : this.newsData.filter(news => news.filter === this.currentFilter).slice(0, this.displayedNews);
+
+                if (filteredNews.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhuma notícia encontrada para este filtro.</p>';
+                    return;
+                }
+
+                container.innerHTML = filteredNews.map(news => `
+                    <article class="news-card card-hover">
+                        <img src="${news.image}" alt="${news.title}" loading="lazy">
+                        <div class="news-card-content">
+                            <div class="date mb-2">${this.formatDate(news.date)}</div>
+                            <h3>${news.title}</h3>
+                            <p class="mt-2">${news.excerpt}</p>
+                            <div class="mt-4">
+                                <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                    ${news.category}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+            }
+
+            filterNews(filter) {
+                this.currentFilter = filter;
+                this.displayedNews = 6; 
+                this.renderNews();
+            }
+
+            loadMoreNews() {
+                this.displayedNews += 6;
+                this.renderNews();
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+
+            async handleNewsletterSignup(form) {
+                const email = form.querySelector('input[type="email"]').value;
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const successToast = document.getElementById('successToast');
+                    const messageEl = document.getElementById('successMessage');
+                    
+                    messageEl.textContent = 'Cadastro realizado com sucesso! Você receberá nossas notícias em breve.';
+                    successToast.classList.remove('hidden');
+                    
+                    form.reset();
+                    
+                    setTimeout(() => {
+                        successToast.classList.add('hidden');
+                    }, 5000);
+                } catch (error) {
+                    console.error('Newsletter signup error:', error);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new NewsPage();
+        });
+    </script>
+</body>
+</html>
