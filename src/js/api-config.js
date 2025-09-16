@@ -5,8 +5,7 @@ class APIConfig {
             baseURL: 'https://newsapi.org/v2',
             apiKey: '41b8e7f7382e420e90584ceb96542157', // NewsAPI key configured
             endpoints: {
-                everything: '/everything',
-                topHeadlines: '/top-headlines'
+                everything: '/everything'
             }
         };
 
