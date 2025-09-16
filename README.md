@@ -30,8 +30,8 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - Links de navegação ativos
 
 #### 🌐 Consumo de APIs Reais
-- **NewsAPI**: Notícias reais de futebol feminino em tempo real ✅
-- **MailerLite**: Newsletter profissional com gestão de assinantes ✅
+- **NewsAPI**: Notícias reais de futebol feminino em tempo real 
+- **MailerLite**: Newsletter profissional com gestão de assinantes 
 - **RSS Feeds**: Fallback automático com feeds do GloboEsporte e Lance
 - **Formulário de Contato**: Armazenamento local para mensagens
 - Sistema de cache inteligente para otimizar requisições
@@ -129,7 +129,7 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 
 ## 🔮 Próximos Passos
 
-- ✅ ~~Integração com APIs reais de notícias esportivas~~ **CONCLUÍDO**
+- Integração com APIs reais de notícias esportivas
 - Sistema de comentários em notícias
 - Área de membros com dashboard
 - Chat em tempo real para torcedoras
@@ -145,7 +145,7 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - **Cache**: 5 minutos para otimizar performance
 
 ### 📧 Comunicação Real
-- **MailerLite**: Newsletter profissional (até 1.000 assinantes grátis) ✅
+- **MailerLite**: Newsletter profissional (até 1.000 assinantes grátis) 
 - **Formulário Local**: Mensagens armazenadas localmente para revisão
 
 ### 🔄 Fallbacks Automáticos
