@@ -97,7 +97,7 @@
     </nav>
 
     <!-- Contact Content -->
-    <main class="py-20">
+    <main class="pt-8 pb-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <section class="text-center mb-16">
@@ -380,6 +380,267 @@
 
     <script src="../js/api-config.js"></script>
     <script src="../js/real-apis.js"></script>
-    <script src="../js/script.js"></script>
+    <script>
+        // Contact page specific functionality
+        class ContactPage {
+            constructor() {
+                this.currentUser = null;
+                this.init();
+            }
+
+            init() {
+                this.loadUserFromStorage();
+                this.setupEventListeners();
+                this.updateLoginButton();
+            }
+
+            loadUserFromStorage() {
+                const savedUser = localStorage.getItem('passaBola_currentUser');
+                if (savedUser) {
+                    try {
+                        this.currentUser = JSON.parse(savedUser);
+                        console.log('👤 User loaded from storage:', this.currentUser.name);
+                    } catch (error) {
+                        console.error('Error loading user from storage:', error);
+                        localStorage.removeItem('passaBola_currentUser');
+                    }
+                }
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('passaBola_currentUser');
+                this.updateLoginButton();
+                this.showToast('Logout realizado com sucesso!', 'success');
+                console.log('👋 User logged out');
+            }
+
+            setupEventListeners() {
+                // Login form
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleLogin(e.target);
+                    });
+                }
+
+                // Login buttons
+                const loginBtn = document.getElementById('loginBtn');
+                const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+                const closeLoginModal = document.getElementById('closeLoginModal');
+                const loginModal = document.getElementById('loginModal');
+
+                if (loginModal) {
+                    loginModal.addEventListener('click', (e) => {
+                        if (e.target === loginModal) {
+                            this.closeLoginModal();
+                        }
+                    });
+                }
+
+                // Mobile menu toggle
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.addEventListener('click', () => {
+                        this.toggleMobileMenu();
+                    });
+                }
+
+                // Contact form
+                const contactForm = document.getElementById('contactForm');
+                if (contactForm) {
+                    contactForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleContactForm(e.target);
+                    });
+                }
+
+            }
+
+            async handleLogin(form) {
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                const password = formData.get('password');
+
+                try {
+                    if (email && password) {
+                        this.currentUser = { 
+                            email, 
+                            name: email.split('@')[0],
+                            loginTime: new Date().toISOString()
+                        };
+                        localStorage.setItem('passaBola_currentUser', JSON.stringify(this.currentUser));
+                        this.showToast('Login realizado com sucesso!', 'success');
+                        this.closeLoginModal();
+                        this.updateLoginButton();
+                    } else {
+                        throw new Error('Email e senha são obrigatórios');
+                    }
+                } catch (error) {
+                    this.showToast(error.message, 'error');
+                }
+            }
+
+            async handleContactForm(form) {
+                const formData = new FormData(form);
+                const firstName = formData.get('firstName');
+                const lastName = formData.get('lastName');
+                const email = formData.get('email');
+                const message = formData.get('message');
+                const newsletter = formData.get('newsletter');
+
+                if (!firstName || !lastName || !email || !message) {
+                    this.showToast('Por favor, preencha todos os campos obrigatórios.', 'error');
+                    return;
+                }
+
+                try {
+                    const realAPI = new RealAPIManager();
+                    const name = `${firstName} ${lastName}`;
+                    const success = await realAPI.sendRealEmail({ name, email, message });
+                    
+                    if (success) {
+                        let message = 'Mensagem enviada com sucesso!';
+                        
+                        // Se newsletter estiver marcado, cadastrar também
+                        if (newsletter) {
+                            try {
+                                await realAPI.subscribeToNewsletter(email);
+                                message += ' Você também foi cadastrado na newsletter!';
+                            } catch (newsletterError) {
+                                console.error('Newsletter signup error:', newsletterError);
+                                message += ' (Mensagem enviada, mas houve erro no cadastro da newsletter)';
+                            }
+                        }
+                        
+                        this.showToast(message, 'success');
+                        form.reset();
+                    } else {
+                        this.showToast('Erro ao enviar mensagem. Tente novamente.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Contact form error:', error);
+                    this.showToast('Erro ao enviar mensagem. Tente novamente.', 'error');
+                }
+            }
+
+
+            updateLoginButton() {
+                const loginBtn = document.getElementById('loginBtn');
+                const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+                
+                if (this.currentUser) {
+                    if (loginBtn) {
+                        loginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
+                        loginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        loginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                        loginBtn.onclick = () => this.toggleUserMenu();
+                    }
+                    if (mobileLoginBtn) {
+                        mobileLoginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
+                        mobileLoginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        mobileLoginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                        mobileLoginBtn.onclick = () => this.toggleUserMenu();
+                    }
+                } else {
+                    if (loginBtn) {
+                        loginBtn.textContent = 'Login';
+                        loginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                        loginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        loginBtn.onclick = () => this.openLoginModal();
+                    }
+                    if (mobileLoginBtn) {
+                        mobileLoginBtn.textContent = 'Login';
+                        mobileLoginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                        mobileLoginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        mobileLoginBtn.onclick = () => this.openLoginModal();
+                    }
+                }
+            }
+
+            toggleUserMenu() {
+                const existingMenu = document.getElementById('userMenu');
+                if (existingMenu) {
+                    existingMenu.remove();
+                    return;
+                }
+
+                const userMenu = document.createElement('div');
+                userMenu.id = 'userMenu';
+                userMenu.className = 'fixed bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] min-w-[200px]';
+                userMenu.innerHTML = `
+                    <div class="py-2">
+                        <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                            👤 ${this.currentUser.name}
+                        </div>
+                        <button onclick="contactPage.logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            🚪 Sair
+                        </button>
+                    </div>
+                `;
+
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    const rect = loginBtn.getBoundingClientRect();
+                    userMenu.style.top = (rect.bottom + 8) + 'px';
+                    userMenu.style.left = (rect.right - 200) + 'px';
+                    
+                    document.body.appendChild(userMenu);
+                }
+
+                setTimeout(() => {
+                    const closeHandler = (e) => {
+                        if (!e.target.closest('#loginBtn') && !e.target.closest('#userMenu')) {
+                            const menu = document.getElementById('userMenu');
+                            if (menu) menu.remove();
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 100);
+            }
+
+            openLoginModal() {
+                const modal = document.getElementById('loginModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            closeLoginModal() {
+                const modal = document.getElementById('loginModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+
+            toggleMobileMenu() {
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (mobileMenu) {
+                    mobileMenu.classList.toggle('hidden');
+                }
+            }
+
+            showToast(message, type = 'success') {
+                const toastId = type === 'success' ? 'successToast' : 'errorToast';
+                const messageId = type === 'success' ? 'successMessage' : 'errorMessage';
+                
+                document.getElementById(messageId).textContent = message;
+                document.getElementById(toastId).classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById(toastId).classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        let contactPage;
+        document.addEventListener('DOMContentLoaded', () => {
+            contactPage = new ContactPage();
+        });
+    </script>
 </body>
 </html>

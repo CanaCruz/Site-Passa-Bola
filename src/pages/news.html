@@ -97,10 +97,10 @@
     </nav>
 
     <!-- News Content -->
-    <main class="py-20">
+    <main class="pt-2 pb-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
-            <section class="text-center mb-16">
+            <section class="text-center mb-4">
                 <h1 class="text-4xl md:text-5xl font-bold mb-6 fade-in-up" style="font-family: 'Poppins', sans-serif; font-weight: 300; color: #7c3aed;">Notícias do Futebol Feminino</h1>
                 <p class="text-xl max-w-3xl mx-auto fade-in-up" style="font-family: 'Poppins', sans-serif; color: #374151;">
                     Acompanhe as principais notícias, resultados e novidades do futebol feminino brasileiro e mundial.
@@ -108,7 +108,7 @@
             </section>
 
             <!-- Filter Section -->
-            <section class="mb-12">
+            <section class="mb-4">
                 <div class="flex flex-wrap justify-center gap-4">
                     <button class="filter-btn active bg-purple-500 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300" data-filter="all">
                         Todas
@@ -275,12 +275,43 @@
                 this.newsPerLoad = 6;
                 this.isLoading = false;
                 this.realAPI = new RealAPIManager();
+                this.currentUser = null;
                 this.init();
             }
 
             init() {
+                this.loadUserFromStorage();
                 this.setupEventListeners();
                 this.loadNews();
+                this.updateLoginButton();
+            }
+
+            loadUserFromStorage() {
+                const savedUser = localStorage.getItem('passaBola_currentUser');
+                if (savedUser) {
+                    try {
+                        this.currentUser = JSON.parse(savedUser);
+                        console.log('👤 User loaded from storage:', this.currentUser.name);
+                    } catch (error) {
+                        console.error('Error loading user from storage:', error);
+                        localStorage.removeItem('passaBola_currentUser');
+                    }
+                }
+            }
+
+            saveUserToStorage() {
+                if (this.currentUser) {
+                    localStorage.setItem('passaBola_currentUser', JSON.stringify(this.currentUser));
+                    console.log('💾 User saved to storage:', this.currentUser.name);
+                }
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('passaBola_currentUser');
+                this.updateLoginButton();
+                this.showToast('Logout realizado com sucesso!', 'success');
+                console.log('👋 User logged out');
             }
 
             setupEventListeners() {
@@ -302,6 +333,15 @@
                     e.preventDefault();
                     this.handleNewsletterSignup(e.target);
                 });
+
+                // Login form
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleLogin(e.target);
+                    });
+                }
 
                 // Login buttons
                 document.getElementById('loginBtn').addEventListener('click', () => {
@@ -596,6 +636,31 @@
                 });
             }
 
+            // Login Methods
+            async handleLogin(form) {
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                const password = formData.get('password');
+
+                try {
+                    if (email && password) {
+                        this.currentUser = { 
+                            email, 
+                            name: email.split('@')[0],
+                            loginTime: new Date().toISOString()
+                        };
+                        localStorage.setItem('passaBola_currentUser', JSON.stringify(this.currentUser));
+                        this.showToast('Login realizado com sucesso!', 'success');
+                        this.closeLoginModal();
+                        this.updateLoginButton();
+                    } else {
+                        throw new Error('Email e senha são obrigatórios');
+                    }
+                } catch (error) {
+                    this.showToast(error.message, 'error');
+                }
+            }
+
             // Login Modal Methods
             openLoginModal() {
                 document.getElementById('loginModal').classList.remove('hidden');
@@ -650,10 +715,86 @@
                     document.getElementById(toastId).classList.add('hidden');
                 }, 3000);
             }
+
+            updateLoginButton() {
+                const loginBtn = document.getElementById('loginBtn');
+                const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+                
+                if (this.currentUser) {
+                    if (loginBtn) {
+                        loginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
+                        loginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        loginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                        loginBtn.onclick = () => this.toggleUserMenu();
+                    }
+                    if (mobileLoginBtn) {
+                        mobileLoginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
+                        mobileLoginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        mobileLoginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                        mobileLoginBtn.onclick = () => this.toggleUserMenu();
+                    }
+                } else {
+                    if (loginBtn) {
+                        loginBtn.textContent = 'Login';
+                        loginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                        loginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        loginBtn.onclick = () => this.openLoginModal();
+                    }
+                    if (mobileLoginBtn) {
+                        mobileLoginBtn.textContent = 'Login';
+                        mobileLoginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                        mobileLoginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                        mobileLoginBtn.onclick = () => this.openLoginModal();
+                    }
+                }
+            }
+
+            toggleUserMenu() {
+                const existingMenu = document.getElementById('userMenu');
+                if (existingMenu) {
+                    existingMenu.remove();
+                    return;
+                }
+
+                const userMenu = document.createElement('div');
+                userMenu.id = 'userMenu';
+                userMenu.className = 'fixed bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] min-w-[200px]';
+                userMenu.innerHTML = `
+                    <div class="py-2">
+                        <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                            👤 ${this.currentUser.name}
+                        </div>
+                        <button onclick="newsPage.logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            🚪 Sair
+                        </button>
+                    </div>
+                `;
+
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    const rect = loginBtn.getBoundingClientRect();
+                    userMenu.style.top = (rect.bottom + 8) + 'px';
+                    userMenu.style.left = (rect.right - 200) + 'px';
+                    
+                    document.body.appendChild(userMenu);
+                }
+
+                setTimeout(() => {
+                    const closeHandler = (e) => {
+                        if (!e.target.closest('#loginBtn') && !e.target.closest('#userMenu')) {
+                            const menu = document.getElementById('userMenu');
+                            if (menu) menu.remove();
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 100);
+            }
         }
 
+        let newsPage;
         document.addEventListener('DOMContentLoaded', () => {
-            new NewsPage();
+            newsPage = new NewsPage();
         });
     </script>
 </body>

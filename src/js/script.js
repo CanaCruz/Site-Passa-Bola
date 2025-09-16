@@ -8,6 +8,7 @@ class PassaBolaApp {
     }
 
     init() {
+        this.loadUserFromStorage();
         this.setupEventListeners();
         this.loadNews();
         this.setupIntersectionObserver();
@@ -17,6 +18,35 @@ class PassaBolaApp {
         this.setupCursorTrail();
         this.addTypingEffect();
         this.setupMobileEnhancements();
+        this.updateLoginButton();
+    }
+
+    loadUserFromStorage() {
+        const savedUser = localStorage.getItem('passaBola_currentUser');
+        if (savedUser) {
+            try {
+                this.currentUser = JSON.parse(savedUser);
+                console.log('👤 User loaded from storage:', this.currentUser.name);
+            } catch (error) {
+                console.error('Error loading user from storage:', error);
+                localStorage.removeItem('passaBola_currentUser');
+            }
+        }
+    }
+
+    saveUserToStorage() {
+        if (this.currentUser) {
+            localStorage.setItem('passaBola_currentUser', JSON.stringify(this.currentUser));
+            console.log('💾 User saved to storage:', this.currentUser.name);
+        }
+    }
+
+    logout() {
+        this.currentUser = null;
+        localStorage.removeItem('passaBola_currentUser');
+        this.updateLoginButton();
+        this.showSuccess('Logout realizado com sucesso!');
+        console.log('👋 User logged out');
     }
 
     setupEventListeners() {
@@ -104,7 +134,12 @@ class PassaBolaApp {
             await new Promise(resolve => setTimeout(resolve, 500));
             
             if (email && password) {
-                this.currentUser = { email, name: email.split('@')[0] };
+                this.currentUser = { 
+                    email, 
+                    name: email.split('@')[0],
+                    loginTime: new Date().toISOString()
+                };
+                this.saveUserToStorage();
                 this.showSuccess('Login realizado com sucesso!');
                 const modal = document.getElementById('loginModal');
                 if (modal) {
@@ -299,16 +334,79 @@ class PassaBolaApp {
         
         if (this.currentUser) {
             if (loginBtn) {
-                loginBtn.textContent = this.currentUser.name;
+                loginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
                 loginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
-                loginBtn.classList.add('bg-green-500');
+                loginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                loginBtn.onclick = () => this.toggleUserMenu();
             }
             if (mobileLoginBtn) {
-                mobileLoginBtn.textContent = this.currentUser.name;
+                mobileLoginBtn.innerHTML = `👤 ${this.currentUser.name} ▼`;
                 mobileLoginBtn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
-                mobileLoginBtn.classList.add('bg-green-500');
+                mobileLoginBtn.classList.add('bg-green-500', 'hover:bg-green-600', 'relative');
+                mobileLoginBtn.onclick = () => this.toggleUserMenu();
+            }
+        } else {
+            if (loginBtn) {
+                loginBtn.textContent = 'Login';
+                loginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                loginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                loginBtn.onclick = () => {
+                    const modal = document.getElementById('loginModal');
+                    if (modal) modal.classList.remove('hidden');
+                };
+            }
+            if (mobileLoginBtn) {
+                mobileLoginBtn.textContent = 'Login';
+                mobileLoginBtn.classList.remove('bg-green-500', 'hover:bg-green-600', 'relative');
+                mobileLoginBtn.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-500');
+                mobileLoginBtn.onclick = () => {
+                    const modal = document.getElementById('loginModal');
+                    if (modal) modal.classList.remove('hidden');
+                };
             }
         }
+    }
+
+    toggleUserMenu() {
+        const existingMenu = document.getElementById('userMenu');
+        if (existingMenu) {
+            existingMenu.remove();
+            return;
+        }
+
+        const userMenu = document.createElement('div');
+        userMenu.id = 'userMenu';
+        userMenu.className = 'fixed bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] min-w-[200px]';
+        userMenu.innerHTML = `
+            <div class="py-2">
+                <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                    👤 ${this.currentUser.name}
+                </div>
+                <button onclick="passaBolaApp.logout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                    🚪 Sair
+                </button>
+            </div>
+        `;
+
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            const rect = loginBtn.getBoundingClientRect();
+            userMenu.style.top = (rect.bottom + 8) + 'px';
+            userMenu.style.left = (rect.right - 200) + 'px';
+            
+            document.body.appendChild(userMenu);
+        }
+
+        setTimeout(() => {
+            const closeHandler = (e) => {
+                if (!e.target.closest('#loginBtn') && !e.target.closest('#userMenu')) {
+                    const menu = document.getElementById('userMenu');
+                    if (menu) menu.remove();
+                    document.removeEventListener('click', closeHandler);
+                }
+            };
+            document.addEventListener('click', closeHandler);
+        }, 100);
     }
 
     setupIntersectionObserver() {
@@ -762,8 +860,9 @@ class PassaBolaApp {
     }
 }
 
+let passaBolaApp;
 document.addEventListener('DOMContentLoaded', () => {
-    new PassaBolaApp();
+    passaBolaApp = new PassaBolaApp();
 });
 
 
