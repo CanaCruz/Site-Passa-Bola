@@ -1,5 +1,3 @@
-// 🚀 Real API Manager for Passa Bola
-// Handles all real API integrations
 
 class RealAPIManager {
     constructor() {
@@ -8,31 +6,26 @@ class RealAPIManager {
         this.cacheExpiry = 5 * 60 * 1000; // 5 minutes
     }
 
-    // 📰 Real News API Integration
     async fetchRealNews() {
         const cacheKey = 'football-news';
         
-        // Check cache first
         if (this.isInCache(cacheKey)) {
             return this.getFromCache(cacheKey);
         }
 
         try {
-            // Try NewsAPI first (if configured)
             if (this.config.isConfigured().newsAPI) {
                 const news = await this.fetchFromNewsAPI();
                 this.setCache(cacheKey, news);
                 return news;
             }
 
-            // Fallback to free news sources
             const news = await this.fetchFromFreeNewsSources();
             this.setCache(cacheKey, news);
             return news;
 
         } catch (error) {
             console.error('Error fetching real news:', error);
-            // Return fallback data if all APIs fail
             return this.getFallbackNews();
         }
     }
@@ -68,7 +61,6 @@ class RealAPIManager {
 
     async fetchFromFreeNewsSources() {
         try {
-            // Using a free news aggregator or RSS feeds
             const response = await fetch('https://newsdata.io/api/1/news?apikey=pub_59687f677d1e8b8d9c0f8c8e8c8e8c8e&q=futebol%20feminino&country=br&language=pt');
             
             if (!response.ok) {
@@ -79,15 +71,12 @@ class RealAPIManager {
             return this.formatNewsData(data.results || []);
         } catch (error) {
             console.warn('Free news sources failed:', error);
-            
-            // Try RSS feed approach
             return await this.fetchFromRSSFeeds();
         }
     }
 
     async fetchFromRSSFeeds() {
         try {
-            // Using RSS2JSON service for free RSS access
             const rssFeeds = [
                 'https://rss2json.com/api.json?rss_url=https://ge.globo.com/futebol/futebol-feminino/rss.xml',
                 'https://rss2json.com/api.json?rss_url=https://www.lance.com.br/futebol-feminino/feed'
@@ -140,10 +129,9 @@ class RealAPIManager {
         }));
     }
 
-    // 📧 Simple Contact Form (Local Storage Fallback)
     async sendRealEmail(formData) {
         try {
-            // Store contact form data locally for now
+            
             const contactData = {
                 name: formData.get('name'),
                 email: formData.get('email'),
@@ -152,7 +140,6 @@ class RealAPIManager {
                 date: new Date().toISOString()
             };
 
-            // Store in localStorage for admin review
             const contacts = JSON.parse(localStorage.getItem('contact-messages') || '[]');
             contacts.push(contactData);
             localStorage.setItem('contact-messages', JSON.stringify(contacts));
@@ -173,13 +160,11 @@ class RealAPIManager {
         }
     }
 
-    // 📬 Real Newsletter Integration
     async subscribeToNewsletter(email, name = '') {
         try {
             if (this.config.isConfigured().mailerLite) {
                 return await this.subscribeViaMailerLite(email, name);
             } else {
-                // Fallback to local storage or simple validation
                 return await this.subscribeViaLocalStorage(email, name);
             }
         } catch (error) {
@@ -216,7 +201,6 @@ class RealAPIManager {
     }
 
     async subscribeViaLocalStorage(email, name) {
-        // Simple fallback - store in localStorage
         const subscribers = JSON.parse(localStorage.getItem('newsletter-subscribers') || '[]');
         
         if (subscribers.includes(email)) {
@@ -229,7 +213,6 @@ class RealAPIManager {
         return { success: true, message: 'Inscrição realizada com sucesso!' };
     }
 
-    // 🔧 Utility Methods
 
     detectCategory(title) {
         const titleLower = title.toLowerCase();
@@ -254,7 +237,6 @@ class RealAPIManager {
             .substring(0, 150) + (text.length > 150 ? '...' : '');
     }
 
-    // Cache management
     isInCache(key) {
         const cached = this.cache.get(key);
         return cached && (Date.now() - cached.timestamp) < this.cacheExpiry;
@@ -272,7 +254,6 @@ class RealAPIManager {
     }
 
     getFallbackNews() {
-        // Fallback data with real-looking content
         return [
             {
                 id: 1,
@@ -298,7 +279,6 @@ class RealAPIManager {
     }
 }
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = RealAPIManager;
 } else if (typeof window !== 'undefined') {

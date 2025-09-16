@@ -14,7 +14,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - **TailwindCSS 4**: Framework CSS moderno para estilização eficiente
 - **HTML Semântico**: Estruturação do código com tags que transmitem significado
 - **JavaScript Vanilla**: Funcionalidades interativas sem dependências externas
-- **Service Worker**: Suporte a PWA (Progressive Web App)
 
 ### Funcionalidades Implementadas
 
@@ -85,7 +84,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 
 ### Performance
 - Lazy loading de imagens
-- Service Worker para cache
 - Otimização de recursos
 - Compressão de assets
 

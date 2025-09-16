@@ -20,10 +20,7 @@ class PassaBolaApp {
     }
 
     setupEventListeners() {
-        // Navigation - Now handles real page navigation
-        // No need to prevent default behavior for multi-page navigation
 
-        // Mobile menu
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         
@@ -33,13 +30,11 @@ class PassaBolaApp {
             });
         }
 
-        // Login modal
         const loginBtn = document.getElementById('loginBtn');
         const mobileLoginBtn = document.getElementById('mobileLoginBtn');
         const loginModal = document.getElementById('loginModal');
         const closeLoginModal = document.getElementById('closeLoginModal');
 
-        // Verificar se os elementos existem antes de adicionar event listeners
         if (loginBtn && loginModal) {
             loginBtn.addEventListener('click', () => {
                 loginModal.classList.remove('hidden');
@@ -58,7 +53,6 @@ class PassaBolaApp {
             });
         }
 
-        // Login form
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
@@ -67,7 +61,6 @@ class PassaBolaApp {
             });
         }
 
-        // Contact form
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
             contactForm.addEventListener('submit', (e) => {
@@ -76,7 +69,6 @@ class PassaBolaApp {
             });
         }
 
-        // Close modal on outside click
         if (loginModal) {
             loginModal.addEventListener('click', (e) => {
                 if (e.target === loginModal) {
@@ -85,7 +77,6 @@ class PassaBolaApp {
             });
         }
 
-        // Newsletter signup
         const newsletterForm = document.getElementById('newsletterForm');
         if (newsletterForm) {
             newsletterForm.addEventListener('submit', (e) => {
@@ -95,7 +86,6 @@ class PassaBolaApp {
         }
     }
 
-    // Mobile menu close helper
     closeMobileMenu() {
         const mobileMenu = document.getElementById('mobileMenu');
         if (mobileMenu) {
@@ -111,10 +101,8 @@ class PassaBolaApp {
         try {
             this.showLoading(true);
             
-            // Simular delay de processamento
             await new Promise(resolve => setTimeout(resolve, 500));
             
-            // Simple validation
             if (email && password) {
                 this.currentUser = { email, name: email.split('@')[0] };
                 this.showSuccess('Login realizado com sucesso!');
@@ -139,14 +127,13 @@ class PassaBolaApp {
         try {
             this.showLoading(true);
             
-            // Send real email using APIs
+    
             const result = await this.realAPI.sendRealEmail(formData);
             
             if (result.success) {
                 this.showSuccess(result.message);
                 form.reset();
-                
-                // Track contact form submission
+            
                 console.log('✅ Contact form sent successfully via real API');
             } else {
                 this.showError(result.message);
@@ -168,14 +155,12 @@ class PassaBolaApp {
         try {
             this.showLoading(true, form.querySelector('button[type="submit"]'));
             
-            // Subscribe using real API
             const result = await this.realAPI.subscribeToNewsletter(email, name);
             
             if (result.success) {
                 this.showSuccess(result.message);
                 form.reset();
                 
-                // Track newsletter subscription
                 console.log('✅ Newsletter subscription successful via real API');
             } else {
                 this.showError(result.message);
@@ -191,13 +176,10 @@ class PassaBolaApp {
 
     async loadNews() {
         try {
-            // Show loading state
             this.showLoadingNews(true);
             
-            // Fetch real news from APIs
             this.newsData = await this.realAPI.fetchRealNews();
             
-            // Render the real news
             this.renderNews();
             
             console.log('✅ Real news loaded successfully!', this.newsData.length, 'articles');
@@ -206,7 +188,6 @@ class PassaBolaApp {
             console.error('Error loading real news:', error);
             this.handleError(error, 'loading news');
             
-            // Fallback to mock data if real APIs fail
             this.loadFallbackNews();
         } finally {
             this.showLoadingNews(false);
@@ -273,7 +254,6 @@ class PassaBolaApp {
     renderNews() {
         const container = document.getElementById('newsContainer');
         
-        // Verificar se o container existe (pode não existir na página inicial)
         if (!container) {
             return;
         }
@@ -437,10 +417,8 @@ class PassaBolaApp {
     }
 
 
-    // API integration methods
     async fetchNewsFromAPI() {
         try {
-            // This would be a real API call
             const response = await fetch('/api/news');
             if (!response.ok) {
                 throw new Error('Falha ao carregar notícias');
@@ -496,7 +474,6 @@ class PassaBolaApp {
         }
     }
 
-    // Error handling
     handleError(error, context = '') {
         console.error(`Error in ${context}:`, error);
         
@@ -526,7 +503,6 @@ class PassaBolaApp {
         this.showError(userMessage);
     }
 
-    // Utility methods
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -552,14 +528,11 @@ class PassaBolaApp {
         };
     }
 
-    // 🚀 Futuristic Effects
     initFuturisticEffects() {
-        // Add GPU acceleration to animated elements
         document.querySelectorAll('.news-card, .glass-card, .btn-futuristic, .btn-holographic').forEach(el => {
             el.classList.add('gpu-accelerated');
         });
 
-        // Enhanced hover effects for cards
         document.querySelectorAll('.news-card').forEach(card => {
             card.addEventListener('mouseenter', (e) => {
                 e.target.style.transform = 'translateY(-10px) rotateX(5deg) scale(1.02)';
@@ -572,7 +545,6 @@ class PassaBolaApp {
             });
         });
 
-        // Add glow effects to buttons on hover
         document.querySelectorAll('.btn-futuristic, .btn-holographic').forEach(btn => {
             btn.addEventListener('mouseenter', () => {
                 btn.classList.add('box-glow');
@@ -582,7 +554,6 @@ class PassaBolaApp {
             });
         });
 
-        // Parallax scroll effect
         window.addEventListener('scroll', this.throttle(() => {
             const scrolled = window.pageYOffset;
             const parallaxElements = document.querySelectorAll('.hero-bg');
@@ -594,7 +565,6 @@ class PassaBolaApp {
         }, 10));
     }
 
-    // ✨ Particle Background System
     createParticleBackground() {
         const heroSection = document.querySelector('.hero-bg');
         if (!heroSection) return;
@@ -603,12 +573,10 @@ class PassaBolaApp {
         particlesContainer.className = 'particles-background';
         heroSection.appendChild(particlesContainer);
 
-        // Create floating particles
         for (let i = 0; i < 50; i++) {
             this.createParticle(particlesContainer);
         }
 
-        // Continuously spawn new particles
         setInterval(() => {
             if (particlesContainer.children.length < 50) {
                 this.createParticle(particlesContainer);
@@ -635,7 +603,6 @@ class PassaBolaApp {
 
         container.appendChild(particle);
 
-        // Remove particle after animation
         particle.addEventListener('animationend', () => {
             if (particle.parentNode) {
                 particle.parentNode.removeChild(particle);
@@ -643,9 +610,8 @@ class PassaBolaApp {
         });
     }
 
-    // 🎯 Interactive Cursor Trail
     setupCursorTrail() {
-        if (window.innerWidth <= 768) return; // Skip on mobile
+        if (window.innerWidth <= 768) return;
 
         const trail = [];
         const trailLength = 10;
@@ -693,29 +659,24 @@ class PassaBolaApp {
         animateTrail();
     }
 
-    // ⌨️ Typing Effect for Hero Title
     addTypingEffect() {
         const heroTitle = document.querySelector('h1');
         if (!heroTitle) return;
 
-        // Apply styles without removing content initially
         heroTitle.style.fontFamily = 'Poppins, sans-serif';
         heroTitle.style.fontWeight = '300';
         heroTitle.style.letterSpacing = '-0.02em';
         
-        // Keep original text visible and just add a subtle fade-in effect
         heroTitle.style.opacity = '0';
         heroTitle.style.transform = 'translateY(20px)';
         heroTitle.style.transition = 'all 1s ease-out';
         
-        // Show the title with smooth animation
         setTimeout(() => {
             heroTitle.style.opacity = '1';
             heroTitle.style.transform = 'translateY(0)';
         }, 500);
     }
 
-    // 🌈 Dynamic Color Theme Switcher
     switchColorTheme(theme) {
         const root = document.documentElement;
         
@@ -747,7 +708,6 @@ class PassaBolaApp {
         });
     }
 
-    // 🎮 Interactive Sound Effects (Optional)
     playInteractionSound(type = 'click') {
         if (!window.AudioContext) return;
 
@@ -775,11 +735,9 @@ class PassaBolaApp {
         oscillator.stop(audioContext.currentTime + 0.1);
     }
 
-    // 📱 Enhanced Mobile Interactions
     setupMobileEnhancements() {
         if (window.innerWidth > 768) return;
 
-        // Add touch feedback
         document.querySelectorAll('.btn-futuristic, .btn-holographic, .news-card').forEach(element => {
             element.addEventListener('touchstart', () => {
                 element.style.transform = 'scale(0.95)';
@@ -792,7 +750,6 @@ class PassaBolaApp {
             });
         });
 
-        // Haptic feedback for supported devices
         const triggerHaptic = () => {
             if ('vibrate' in navigator) {
                 navigator.vibrate(10);
@@ -805,25 +762,11 @@ class PassaBolaApp {
     }
 }
 
-// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new PassaBolaApp();
 });
 
-// Service Worker registration for PWA capabilities
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
 
-// Export for testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PassaBolaApp;
 }
