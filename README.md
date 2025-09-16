@@ -152,13 +152,6 @@ Um site completo dedicado ao futebol feminino brasileiro, desenvolvido com tecno
 - **RSS Feeds**: GloboEsporte e Lance como backup de notícias
 - **localStorage**: Backup para newsletter e formulários
 
-## 🔧 Como Configurar APIs
-
-1. **Leia o arquivo**: `REAL-APIS-SETUP.md`
-2. **Configure suas chaves**: Em `src/js/api-config.js`
-3. **Teste no console**: `new APIConfig().isConfigured()` (deve mostrar 2/2 configuradas)
-4. **Monitore logs**: Console do navegador (F12)
-
 ## 👨‍💻 Desenvolvedores
 
 Arthur Canaverde da Cruz (RM:563029)
